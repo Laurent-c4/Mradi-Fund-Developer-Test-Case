@@ -6,9 +6,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -26,16 +31,16 @@ import android.provider.OpenableColumns;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.MimeTypeMap;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int PICK_PDF_REQUEST = 1;
 
     private StorageReference mStorageReference;
     private DatabaseReference mDatabaseReference;
+    private String userId;
 
     private ProgressBar progressBar;
 
@@ -53,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
         mStorageReference = FirebaseStorage.getInstance().getReference("uploads");
         mDatabaseReference = FirebaseDatabase.getInstance().getReference("uploads");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        userId = user.getUid();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +85,16 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            AuthUI.getInstance()
+                    .signOut(this)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Intent intent = new Intent(MainActivity.this, Login.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
             return true;
         }
 
@@ -89,19 +105,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+        if(requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK
                && data != null && data.getData() != null){
             mPDFUri = data.getData();
+            if (!getFileName(mPDFUri).contains("MPESA_Statement")){
+                Toast.makeText(MainActivity.this,"Invalid. Please Choose an MPESA Statement", Toast.LENGTH_LONG).show();
+            } else {
+                uploadFile();
+            }
         }
-
-        uploadFile();
     }
 
     private void openFileChooser(){
         Intent intent = new Intent();
         intent.setType("application/pdf");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent,PICK_IMAGE_REQUEST);
+        startActivityForResult(intent, PICK_PDF_REQUEST);
     }
 
     private  String getFileName(Uri uri) {
@@ -116,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void uploadFile(){
         if (mPDFUri != null){
-            StorageReference fileReference = mStorageReference.child(getFileName(mPDFUri));
+            StorageReference fileReference = mStorageReference.child(userId+"/"+getFileName(mPDFUri));
             progressBar.setVisibility(View.VISIBLE);
             fileReference.putFile(mPDFUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -133,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
                             Toast.makeText(MainActivity.this,"Upload Succesful", Toast.LENGTH_LONG).show();
                             Upload upload = new Upload(getFileName(mPDFUri),taskSnapshot.getUploadSessionUri().toString());
-                            mDatabaseReference.push().setValue(upload);
+                            mDatabaseReference.child(userId).push().setValue(upload);
 
                         }
                     })
