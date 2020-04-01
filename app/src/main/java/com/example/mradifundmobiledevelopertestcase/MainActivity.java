@@ -44,8 +44,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -96,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
         mPasswordRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -158,15 +157,16 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK
                && data != null && data.getData() != null){
             mPDFUri = data.getData();
+
             if (!getFileName(mPDFUri).contains("MPESA_Statement")){
                 Toast.makeText(MainActivity.this,"Invalid. Please Choose an MPESA Statement", Toast.LENGTH_LONG).show();
             } else {
+
                 if(allPermissionsGranted()) {
                     uploadFile();
                 }else {
                     ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
                 }
-
             }
         }
     }
@@ -193,7 +193,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-
     private void openFileChooser(){
         Intent intent = new Intent();
         intent.setType("application/pdf");
@@ -213,6 +212,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void uploadFile(){
         if (mPDFUri != null){
+
+            //UPLOAD PDF FILE TO FIREBASE STORAGE
             StorageReference fileReference = mStorageReference.child(userId+"/"+getFileName(mPDFUri));
             progressBar.setVisibility(View.VISIBLE);
             fileReference.putFile(mPDFUri)
@@ -229,12 +230,16 @@ public class MainActivity extends AppCompatActivity {
                             }, 3000);
 
                             Toast.makeText(MainActivity.this,"Upload Succesful", Toast.LENGTH_LONG).show();
+
+                            //UPDATE DATABASE WITH NEW PDF DETAILS
                             Upload upload = new Upload(getFileName(mPDFUri),taskSnapshot.getUploadSessionUri().toString());
                             mUploadsReference.child(userId).push().setValue(upload);
 
 
+                            // POST REQUEST TO BACKEND API CONTAINING NEW PDF WHOSE DATA SHOULD BE EXTRACTED
                             File file = new File(Environment.getExternalStoragePublicDirectory(
                                     Environment.DIRECTORY_DOWNLOADS),getFileName(mPDFUri));
+
                             RequestBody requestBody = RequestBody.create(MediaType.parse("application/pdf"),file);
                             MultipartBody.Part part = MultipartBody.Part.createFormData("files[]",file.getName(), requestBody);
 
