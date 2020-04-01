@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,14 +33,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -57,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
     private String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
 
     private StorageReference mStorageReference;
-    private DatabaseReference mDatabaseReference;
+    private DatabaseReference mUploadsReference;
+    private DatabaseReference mPasswordRef;
     private String userId;
 
     private ProgressBar progressBar;
@@ -74,10 +81,11 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.determinateBar);
 
-        mStorageReference = FirebaseStorage.getInstance().getReference("uploads");
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference("uploads");
+        mStorageReference = FirebaseStorage.getInstance().getReference("Uploads");
+        mUploadsReference = FirebaseDatabase.getInstance().getReference("Uploads");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userId = user.getUid();
+        mPasswordRef = FirebaseDatabase.getInstance().getReference("Passwords").child(userId);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +94,30 @@ public class MainActivity extends AppCompatActivity {
                 openFileChooser();
             }
         });
+
+
+        mPasswordRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int count = 0;
+                for(DataSnapshot locationSnapshot:dataSnapshot.getChildren()){
+                    count++;
+                }
+
+                if(count==0) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    IDNumberFragment idNumberFragment = new IDNumberFragment();
+                    idNumberFragment.show(fm, "IDFragment");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -198,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
                             Toast.makeText(MainActivity.this,"Upload Succesful", Toast.LENGTH_LONG).show();
                             Upload upload = new Upload(getFileName(mPDFUri),taskSnapshot.getUploadSessionUri().toString());
-                            mDatabaseReference.child(userId).push().setValue(upload);
+                            mUploadsReference.child(userId).push().setValue(upload);
 
 
                             File file = new File(Environment.getExternalStoragePublicDirectory(

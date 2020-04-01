@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+
+
+
+   <TextView
+       android:id="@+id/IDNumberTextView"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="30dp"
+       android:layout_centerHorizontal="true"
+       android:text="Please Enter ID Number"/>
+
+    <EditText
+        android:id="@+id/setPassword"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/IDNumberTextView"
+        android:layout_centerHorizontal="true"
+        android:hint="ID Number">
+
+    </EditText>
+    <Button
+        android:id="@+id/submitPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/setPassword"
+        android:layout_marginTop="10dp"
+        android:text="SUBMIT"
+        android:textColor="@color/colorPrimary"/>
+
+
+</RelativeLayout>
