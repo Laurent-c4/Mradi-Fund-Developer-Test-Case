@@ -1,10 +1,28 @@
 package com.example.mradifundmobiledevelopertestcase;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.provider.OpenableColumns;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,22 +39,22 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import java.io.File;
 
-import android.os.Handler;
-import android.provider.OpenableColumns;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int PICK_PDF_REQUEST = 1;
+    private int REQUEST_CODE_PERMISSIONS = 10;
+    private String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
 
     private StorageReference mStorageReference;
     private DatabaseReference mDatabaseReference;
@@ -111,10 +129,38 @@ public class MainActivity extends AppCompatActivity {
             if (!getFileName(mPDFUri).contains("MPESA_Statement")){
                 Toast.makeText(MainActivity.this,"Invalid. Please Choose an MPESA Statement", Toast.LENGTH_LONG).show();
             } else {
-                uploadFile();
+                if(allPermissionsGranted()) {
+                    uploadFile();
+                }else {
+                    ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+                }
+
             }
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == REQUEST_CODE_PERMISSIONS){
+            if(allPermissionsGranted()) {
+                    uploadFile();
+            } else {
+                Toast.makeText(this, "Permissions not granted by user ", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+    private boolean allPermissionsGranted() {
+        for(String permission : REQUIRED_PERMISSIONS){
+            if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     private void openFileChooser(){
         Intent intent = new Intent();
@@ -154,6 +200,31 @@ public class MainActivity extends AppCompatActivity {
                             Upload upload = new Upload(getFileName(mPDFUri),taskSnapshot.getUploadSessionUri().toString());
                             mDatabaseReference.child(userId).push().setValue(upload);
 
+
+                            File file = new File(Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_DOWNLOADS),getFileName(mPDFUri));
+                            RequestBody requestBody = RequestBody.create(MediaType.parse("application/pdf"),file);
+                            MultipartBody.Part part = MultipartBody.Part.createFormData("files[]",file.getName(), requestBody);
+
+                            RequestBody description = RequestBody.create(MediaType.parse("text/plain"),"New PDF");
+
+                            Retrofit retrofit = NetworkClient.getRetrofit();
+                            UploadApi uploadApi = retrofit.create(UploadApi.class);
+                            Call call = uploadApi.uploadPDF(description, part, userId);
+                            call.enqueue(new Callback() {
+                                @Override
+                                public void onResponse(Call call, Response response) {
+                                    System.out.println("Success");
+                                }
+
+                                @Override
+                                public void onFailure(Call call, Throwable t) {
+                                    Log.e("On Failure", t.getMessage());
+                                }
+                            });
+
+
+
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -173,6 +244,5 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,"No File Selected", Toast.LENGTH_LONG).show();
         }
     }
-
 
 }
