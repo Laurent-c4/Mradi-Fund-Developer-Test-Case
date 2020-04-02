@@ -4,31 +4,98 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class FirstFragment extends Fragment {
+    CardView summaryCardView;
+    CardView barGraphCardView;
+    CardView lineGraphCardView;
+    CardView IDNumberCardView;
+    CardView emailCardView;
+    TextView welcomeTextView;
 
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_first, container, false);
-    }
+        View rootView = inflater.inflate(R.layout.fragment_first, container, false);
 
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String displayName = user.getDisplayName();
 
-        view.findViewById(R.id.button_first).setOnClickListener(new View.OnClickListener() {
+        welcomeTextView = rootView.findViewById(R.id.welcomeTextView);
+        welcomeTextView.setText(displayName);
+
+        summaryCardView = rootView.findViewById(R.id.viewSummaryCardView);
+        summaryCardView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_firstFragment_to_lineGraphFragment);
+            public void onClick(View v) {
+
             }
         });
+
+        barGraphCardView = rootView.findViewById(R.id.barGraphCardView);
+        barGraphCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MainActivity.mPDFUri!=null){
+                NavHostFragment.findNavController(FirstFragment.this)
+                        .navigate(R.id.action_firstFragment_to_barGraphFragment);
+                } else {
+                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen",Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+
+        lineGraphCardView = rootView.findViewById(R.id.lineGraphCardView);
+        lineGraphCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MainActivity.mPDFUri!=null){
+                    NavHostFragment.findNavController(FirstFragment.this)
+                            .navigate(R.id.action_firstFragment_to_lineGraphFragment);
+                } else {
+                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        IDNumberCardView = rootView.findViewById(R.id.IDNumberCardView);
+        IDNumberCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(FirstFragment.this)
+                        .navigate(R.id.action_firstFragment_to_IDNumberFragment);
+            }
+        });
+
+        emailCardView = rootView.findViewById(R.id.emailCardView);
+        emailCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
+
+
+
+
+        return rootView;
+
+
     }
+
 }

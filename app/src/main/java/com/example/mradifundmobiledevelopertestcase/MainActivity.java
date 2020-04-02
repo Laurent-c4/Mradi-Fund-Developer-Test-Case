@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
 
-    public static Uri mPDFUri;
+    public static Uri mPDFUri=null;
 
     public static LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<DataPoint>();
     public static Double maxY = 0.0;
@@ -93,7 +93,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("  Home");
+        toolbar.setLogo(R.drawable.ic_actionbar_logo);
         setSupportActionBar(toolbar);
+
 
         navController = Navigation.findNavController(this,R.id.nav_host_fragment);
         AppBarConfiguration appBarConfiguration=
@@ -329,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                                        }
 //                                    });
-                                    navController.navigate(R.id.lineGraphFragment);
+                                    navController.navigate(R.id.barGraphFragment);
                                 }
 
                                 @Override
