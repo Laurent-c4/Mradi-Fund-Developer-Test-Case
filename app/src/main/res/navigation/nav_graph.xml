@@ -19,5 +19,13 @@
             app:destination="@id/lineGraphFragment"
             app:launchSingleTop="false"
             app:popUpTo="@id/firstFragment" />
+        <action
+            android:id="@+id/action_firstFragment_to_barGraphFragment"
+            app:destination="@id/barGraphFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/barGraphFragment"
+        android:name="com.example.mradifundmobiledevelopertestcase.BarGraphFragment"
+        android:label="fragment_bargraph"
+        tools:layout="@layout/fragment_bargraph" />
 </navigation>

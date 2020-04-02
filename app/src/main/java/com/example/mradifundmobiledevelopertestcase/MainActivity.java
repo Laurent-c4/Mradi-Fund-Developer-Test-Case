@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                                        }
 //                                    });
-                                    navController.navigate(R.id.lineGraphFragment);
+                                    navController.navigate(R.id.barGraphFragment);
                                 }
 
                                 @Override
