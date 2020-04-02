@@ -97,7 +97,7 @@ public class BarGraphFragment extends Fragment {
 
                     barEntries.add(new BarEntry(Integer.parseInt(entry.getKey().substring(8)), Float.parseFloat(totalSpent.toString()),entry.getKey()));
                     labels.add(entry.getKey());
-                    descriptionString = entry.getKey().substring(0,7);
+//                    descriptionString = entry.getKey().substring(0,7);
                 }
 
 //                xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
@@ -109,7 +109,7 @@ public class BarGraphFragment extends Fragment {
 
                 BarDataSet barDataSet = new BarDataSet(barEntries, "Expenditure");
                 Description description = new Description();
-                description.setText(descriptionString);
+                description.setText("Daily Spending");
                 barChart.setDescription(description);
                 BarData data = new BarData();
                 data.addDataSet(barDataSet);
