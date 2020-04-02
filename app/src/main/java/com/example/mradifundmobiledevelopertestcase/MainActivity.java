@@ -24,6 +24,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,8 +47,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -65,9 +77,15 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mPasswordRef;
     private String userId;
 
+    private  NavController navController;
+
     private ProgressBar progressBar;
 
-    private Uri mPDFUri;
+    public static Uri mPDFUri;
+
+    public static LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<DataPoint>();
+    public static Double maxY = 0.0;
+    public static String uploadedFilename;
 
 
     @Override
@@ -76,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        navController = Navigation.findNavController(this,R.id.nav_host_fragment);
+        AppBarConfiguration appBarConfiguration=
+                new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupWithNavController(toolbar, navController);
 
         progressBar = findViewById(R.id.determinateBar);
 
@@ -200,13 +223,14 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, PICK_PDF_REQUEST);
     }
 
-    private  String getFileName(Uri uri) {
+    public String getFileName(Uri uri) {
         ContentResolver cR = getContentResolver();
         Cursor returnCursor = cR.query(uri, null, null, null, null);
         int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
         returnCursor.moveToFirst();
         String fileName = returnCursor.getString(nameIndex);
 //        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        uploadedFilename = fileName;
         return fileName;
     }
 
@@ -251,7 +275,61 @@ public class MainActivity extends AppCompatActivity {
                             call.enqueue(new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response response) {
-                                    System.out.println("Success");
+//                                    DatabaseReference mUserExpenditureListReference;
+//                                    mUserExpenditureListReference = FirebaseDatabase.getInstance().getReference("Expenditure_List").child(userId).child(getFileName(mPDFUri).replaceAll("[^A-Za-z0-9]",""));
+//                                    mUserExpenditureListReference.addValueEventListener(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+////                                            Map<String, List<Expenditure>> cache = new HashMap<>();
+////                                            List<Expenditure> expenditureList = new ArrayList<>();
+////                                            for (DataSnapshot locationSnapshot : dataSnapshot.getChildren()){
+////                                                Expenditure expenditure = locationSnapshot.getValue(Expenditure.class);
+////
+////
+////                                                //Group same-day expenditure in hash map
+////                                                List<Expenditure> list = cache.get(expenditure.getDate().substring(8,10));
+////                                                if (list == null) {
+////                                                    list = new ArrayList<>();
+////                                                    cache.put(expenditure.getDate().substring(8,10),list);
+////                                                }
+////                                                list.add(expenditure);
+////
+////                                            }
+////
+////                                            // Function to sort map by Key
+////                                            // TreeMap to store values of HashMap
+////                                            TreeMap<String, List<Expenditure>> sorted = new TreeMap<>();
+////
+////                                            // Copy all data from hashMap into TreeMap
+////                                            sorted.putAll(cache);
+////
+////                                            // Display the TreeMap which is naturally sorted
+////                                            for (Map.Entry<String, List<Expenditure>> entry : sorted.entrySet()){
+////
+////                                                Double totalSpent = 0.0;
+////
+////                                                for (int i = 0; i < entry.getValue().size(); i++) {
+////                                                    totalSpent += entry.getValue().get(i).getSpent();
+////                                                }
+////
+////
+////
+////                                                lineGraphSeries.appendData(new DataPoint(Integer.parseInt(entry.getKey()), totalSpent),true,cache.entrySet().size());
+////                                                if (totalSpent > maxY){
+////                                                    maxY = totalSpent + 2000;
+////                                                }
+////                                            }
+////
+////                                            navController.navigate(R.id.lineGraphFragment);
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                        }
+//                                    });
+                                    navController.navigate(R.id.lineGraphFragment);
                                 }
 
                                 @Override
@@ -259,8 +337,6 @@ public class MainActivity extends AppCompatActivity {
                                     Log.e("On Failure", t.getMessage());
                                 }
                             });
-
-
 
                         }
                     })
