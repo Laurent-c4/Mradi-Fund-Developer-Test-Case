@@ -15,12 +15,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class FirstFragment extends Fragment {
-    CardView summaryCardView;
-    CardView barGraphCardView;
-    CardView lineGraphCardView;
-    CardView IDNumberCardView;
-    CardView emailCardView;
-    TextView welcomeTextView;
+    private CardView summaryCardView;
+    private CardView barGraphCardView;
+    private CardView lineGraphCardView;
+    private CardView IDNumberCardView;
+    private CardView emailCardView;
+    private TextView welcomeTextView;
 
     @Override
     public View onCreateView(
@@ -39,7 +39,12 @@ public class FirstFragment extends Fragment {
         summaryCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (MainActivity.mPDFUri!=null){
+                    NavHostFragment.findNavController(FirstFragment.this)
+                            .navigate(R.id.action_firstFragment_to_pieChartFragment);
+                } else {
+                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

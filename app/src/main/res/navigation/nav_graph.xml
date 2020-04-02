@@ -16,15 +16,16 @@
         tools:layout="@layout/fragment_first" >
         <action
             android:id="@+id/action_firstFragment_to_lineGraphFragment"
-            app:destination="@id/lineGraphFragment"
-            app:launchSingleTop="false"
-            app:popUpTo="@id/firstFragment" />
+            app:destination="@id/lineGraphFragment" />
         <action
             android:id="@+id/action_firstFragment_to_barGraphFragment"
             app:destination="@id/barGraphFragment" />
         <action
             android:id="@+id/action_firstFragment_to_IDNumberFragment"
             app:destination="@id/IDNumberFragment" />
+        <action
+            android:id="@+id/action_firstFragment_to_pieChartFragment"
+            app:destination="@id/pieChartFragment" />
     </fragment>
     <fragment
         android:id="@+id/barGraphFragment"
@@ -34,5 +35,10 @@
     <dialog
         android:id="@+id/IDNumberFragment"
         android:name="com.example.mradifundmobiledevelopertestcase.IDNumberFragment"
-        android:label="IDNumberFragment" />
+        android:label="ID" />
+    <fragment
+        android:id="@+id/pieChartFragment"
+        android:name="com.example.mradifundmobiledevelopertestcase.PieChartFragment"
+        android:label="Pie Chart"
+        tools:layout="@layout/fragment_piechart"/>
 </navigation>
