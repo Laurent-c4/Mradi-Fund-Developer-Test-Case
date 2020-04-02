@@ -189,7 +189,54 @@ public class MainActivity extends AppCompatActivity {
             } else {
 
                 if(allPermissionsGranted()) {
-                    uploadFile();
+                    // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
+                    mPasswordRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            int count = 0;
+                            for(DataSnapshot locationSnapshot:dataSnapshot.getChildren()){
+                                count++;
+                            }
+
+                            if(count==0) {
+                                FragmentManager fm = getSupportFragmentManager();
+                                IDNumberFragment idNumberFragment = new IDNumberFragment();
+                                idNumberFragment.show(fm, "IDFragment");
+                            } else {
+                                // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
+                                mPasswordRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        int count = 0;
+                                        for(DataSnapshot locationSnapshot:dataSnapshot.getChildren()){
+                                            count++;
+                                        }
+
+                                        if(count==0) {
+                                            FragmentManager fm = getSupportFragmentManager();
+                                            IDNumberFragment idNumberFragment = new IDNumberFragment();
+                                            idNumberFragment.show(fm, "IDFragment");
+                                        } else {
+                                            uploadFile();
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                 }else {
                     ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
                 }
@@ -202,7 +249,53 @@ public class MainActivity extends AppCompatActivity {
 //        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == REQUEST_CODE_PERMISSIONS){
             if(allPermissionsGranted()) {
-                    uploadFile();
+                // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
+                mPasswordRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int count = 0;
+                        for(DataSnapshot locationSnapshot:dataSnapshot.getChildren()){
+                            count++;
+                        }
+
+                        if(count==0) {
+                            FragmentManager fm = getSupportFragmentManager();
+                            IDNumberFragment idNumberFragment = new IDNumberFragment();
+                            idNumberFragment.show(fm, "IDFragment");
+                        } else {
+                            // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
+                            mPasswordRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    int count = 0;
+                                    for(DataSnapshot locationSnapshot:dataSnapshot.getChildren()){
+                                        count++;
+                                    }
+
+                                    if(count==0) {
+                                        FragmentManager fm = getSupportFragmentManager();
+                                        IDNumberFragment idNumberFragment = new IDNumberFragment();
+                                        idNumberFragment.show(fm, "IDFragment");
+                                    } else {
+                                        uploadFile();
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             } else {
                 Toast.makeText(this, "Permissions not granted by user ", Toast.LENGTH_SHORT).show();
                 finish();
