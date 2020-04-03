@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,7 +35,7 @@ import static com.example.mradifundmobiledevelopertestcase.MainActivity.uploaded
 
 public class LineGraphFragment extends Fragment {
 
-//    Double maxY = 0.0;
+    ImageButton rightNavigation;
 
     @Override
     public View onCreateView(
@@ -43,10 +45,21 @@ public class LineGraphFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_linegraph, container, false);
         GraphView graph = rootView.findViewById(R.id.lineGraph);
+        rightNavigation = rootView.findViewById(R.id.navigateToPieChart);
+
+        rightNavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(LineGraphFragment.this)
+                        .navigate(R.id.action_lineGraphFragment_to_pieChartFragment);
+            }
+        });
+
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();
         //    LineGraphSeries<DataPoint> series;
-        DatabaseReference mUserExpenditureListReference = FirebaseDatabase.getInstance().getReference("Expenditure_List").child(userId).child(uploadedFilename.replaceAll("[^A-Za-z0-9]",""));
+        DatabaseReference mUserExpenditureListReference = FirebaseDatabase.getInstance().getReference("Expenditure_List").child(userId).child(uploadedFilename.replaceAll("[^A-Za-z0-9]","")).child("expenditureList");
         mUserExpenditureListReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

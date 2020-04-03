@@ -28,7 +28,7 @@
         <androidx.cardview.widget.CardView
             android:foreground="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:id="@+id/emailCardView"
+            android:id="@+id/historyCardView"
             android:layout_width="160dp"
             android:layout_height="190dp"
             android:layout_margin="10dp">
@@ -41,14 +41,14 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:background="@drawable/cerclebackgroundpurple"
-                    android:src="@drawable/ic_icon_emailicon"
+                    android:src="@drawable/ic_icon_history"
                     android:padding="10dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Email"/>
+                    android:text="History"/>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Download your MPESA Statements"
+                    android:text="View History of MPESA Statements"
                     android:padding="5dp"
                     android:textColor="@android:color/darker_gray"/>
 
@@ -80,7 +80,7 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:background="@drawable/cerclebackgroundpink"
-
+                    android:src="@drawable/ic_icon_userid"
                     android:padding="10dp"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -220,7 +220,7 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:background="@drawable/cerclebackgroundpurple"
-
+                    android:src="@drawable/ic_icon_summary"
                     android:padding="10dp"/>
                 <TextView
                     android:layout_width="wrap_content"

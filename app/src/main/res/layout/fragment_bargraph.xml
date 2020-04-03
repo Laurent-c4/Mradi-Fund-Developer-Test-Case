@@ -13,4 +13,26 @@
 
     </com.github.mikephil.charting.charts.BarChart>
 
+    <ImageButton
+        android:id="@+id/navigateToPieChart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="3dp"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_arrow_left_green_48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"/>
+
+    <ImageButton
+        android:id="@+id/noNavigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="3dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_arrow_right_grey_48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="false"/>
+
 </RelativeLayout>

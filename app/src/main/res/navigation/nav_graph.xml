@@ -7,8 +7,13 @@
     <fragment
         android:id="@+id/lineGraphFragment"
         android:name="com.example.mradifundmobiledevelopertestcase.LineGraphFragment"
-        android:label="Line Graph"
-        tools:layout="@layout/fragment_linegraph" />
+        android:label="Daily Expenses"
+        tools:layout="@layout/fragment_linegraph" >
+        <action
+            android:id="@+id/action_lineGraphFragment_to_pieChartFragment"
+            app:destination="@id/pieChartFragment"
+            app:popUpTo="@id/firstFragment" />
+    </fragment>
     <fragment
         android:id="@+id/firstFragment"
         android:name="com.example.mradifundmobiledevelopertestcase.FirstFragment"
@@ -16,23 +21,51 @@
         tools:layout="@layout/fragment_first" >
         <action
             android:id="@+id/action_firstFragment_to_lineGraphFragment"
-            app:destination="@id/lineGraphFragment"
-            app:launchSingleTop="false"
-            app:popUpTo="@id/firstFragment" />
+            app:destination="@id/lineGraphFragment" />
         <action
             android:id="@+id/action_firstFragment_to_barGraphFragment"
             app:destination="@id/barGraphFragment" />
         <action
             android:id="@+id/action_firstFragment_to_IDNumberFragment"
             app:destination="@id/IDNumberFragment" />
+        <action
+            android:id="@+id/action_firstFragment_to_pieChartFragment"
+            app:destination="@id/pieChartFragment" />
+        <action
+            android:id="@+id/action_firstFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
     </fragment>
     <fragment
         android:id="@+id/barGraphFragment"
         android:name="com.example.mradifundmobiledevelopertestcase.BarGraphFragment"
-        android:label="Bar Graph"
-        tools:layout="@layout/fragment_bargraph" />
+        android:label="Daily Expenses"
+        tools:layout="@layout/fragment_bargraph" >
+        <action
+            android:id="@+id/action_barGraphFragment_to_pieChartFragment"
+            app:destination="@id/pieChartFragment"
+            app:popUpTo="@id/firstFragment" />
+    </fragment>
     <dialog
         android:id="@+id/IDNumberFragment"
         android:name="com.example.mradifundmobiledevelopertestcase.IDNumberFragment"
-        android:label="IDNumberFragment" />
+        android:label="ID" />
+    <fragment
+        android:id="@+id/pieChartFragment"
+        android:name="com.example.mradifundmobiledevelopertestcase.PieChartFragment"
+        android:label="Summary"
+        tools:layout="@layout/fragment_piechart">
+        <action
+            android:id="@+id/action_pieChartFragment_to_barGraphFragment"
+            app:destination="@id/barGraphFragment"
+            app:popUpTo="@id/firstFragment" />
+        <action
+            android:id="@+id/action_pieChartFragment_to_lineGraphFragment"
+            app:destination="@id/lineGraphFragment"
+            app:popUpTo="@id/firstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.example.mradifundmobiledevelopertestcase.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history"/>
 </navigation>

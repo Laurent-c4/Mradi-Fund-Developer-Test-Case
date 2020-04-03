@@ -38,6 +38,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/determinateBar"
         app:navGraph="@navigation/nav_graph"
+        android:layout_above="@id/fab"
         app:defaultNavHost="true"
         />
 
