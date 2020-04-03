@@ -69,54 +69,62 @@ public class LineGraphFragment extends Fragment {
                     Expenditure expenditure = locationSnapshot.getValue(Expenditure.class);
 
 
-                    //Group same-day expenditure in hash map
-                    List<Expenditure> list = cache.get(expenditure.getDate().substring(8,10));
-                    if (list == null) {
-                        list = new ArrayList<>();
-                        cache.put(expenditure.getDate().substring(8,10),list);
+                    try {
+                        //Group same-day expenditure in hash map
+                        List<Expenditure> list = cache.get(expenditure.getDate().substring(8,10));
+                        if (list == null) {
+                            list = new ArrayList<>();
+                            cache.put(expenditure.getDate().substring(8,10),list);
+                        }
+                        list.add(expenditure);
+                    } catch (Exception e){
+
                     }
-                    list.add(expenditure);
+
 
                 }
 
-                // Function to sort map by Key
-                // TreeMap to store values of HashMap
-                TreeMap<String, List<Expenditure>> sorted = new TreeMap<>();
+                try {
 
-                // Copy all data from hashMap into TreeMap
-                sorted.putAll(cache);
+                    // Function to sort map by Key
+                    // TreeMap to store values of HashMap
+                    TreeMap<String, List<Expenditure>> sorted = new TreeMap<>();
 
-                // Display the TreeMap which is naturally sorted
-                for (Map.Entry<String, List<Expenditure>> entry : sorted.entrySet()){
+                    // Copy all data from hashMap into TreeMap
+                    sorted.putAll(cache);
 
-                    Double totalSpent = 0.0;
+                    // Display the TreeMap which is naturally sorted
+                    for (Map.Entry<String, List<Expenditure>> entry : sorted.entrySet()) {
 
-                    for (int i = 0; i < entry.getValue().size(); i++) {
-                        totalSpent += entry.getValue().get(i).getSpent();
+                        Double totalSpent = 0.0;
+
+                        for (int i = 0; i < entry.getValue().size(); i++) {
+                            totalSpent += entry.getValue().get(i).getSpent();
+                        }
+
+
+                        lineGraphSeries.appendData(new DataPoint(Integer.parseInt(entry.getKey()), totalSpent), true, cache.entrySet().size());
+                        if (totalSpent > maxY) {
+                            maxY = totalSpent + 2000;
+                        }
                     }
 
+                    graph.removeAllSeries();
+                    graph.addSeries(lineGraphSeries);
 
+                    graph.getViewport().setMaxX(31);
+                    graph.getViewport().setMinX(0);
+                    graph.getViewport().setXAxisBoundsManual(true);
 
-                    lineGraphSeries.appendData(new DataPoint(Integer.parseInt(entry.getKey()), totalSpent),true,cache.entrySet().size());
-                    if (totalSpent > maxY){
-                        maxY = totalSpent + 2000;
-                    }
+                    graph.getViewport().setMaxY(maxY);
+                    graph.getViewport().setMinY(0);
+                    graph.getViewport().setYAxisBoundsManual(true);
+
+                    lineGraphSeries = new LineGraphSeries<DataPoint>();
+                    maxY = 0.0;
+                }catch (Exception e) {
+
                 }
-
-                graph.removeAllSeries();
-                graph.addSeries(lineGraphSeries);
-
-                graph.getViewport().setMaxX(31);
-                graph.getViewport().setMinX(0);
-                graph.getViewport().setXAxisBoundsManual(true);
-
-                graph.getViewport().setMaxY(maxY);
-                graph.getViewport().setMinY(0);
-                graph.getViewport().setYAxisBoundsManual(true);
-
-                lineGraphSeries = new LineGraphSeries<DataPoint>();
-                maxY=0.0;
-
             }
 
             @Override
@@ -124,10 +132,6 @@ public class LineGraphFragment extends Fragment {
 
             }
         });
-
-
-
-
         return rootView;
     }
 

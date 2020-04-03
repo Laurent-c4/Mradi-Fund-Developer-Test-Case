@@ -81,59 +81,68 @@ public class BarGraphFragment extends Fragment {
                 for (DataSnapshot locationSnapshot : dataSnapshot.getChildren()){
                     Expenditure expenditure = locationSnapshot.getValue(Expenditure.class);
 
+                    try {
+                        //Group same-day expenditure in hash map
+                        List<Expenditure> list = cache.get(expenditure.getDate().substring(0,10));
+                        if (list == null) {
+                            list = new ArrayList<>();
+                            cache.put(expenditure.getDate().substring(0,10),list);
+                        }
+                        list.add(expenditure);
+                    }catch (Exception e) {
 
-                    //Group same-day expenditure in hash map
-                    List<Expenditure> list = cache.get(expenditure.getDate().substring(0,10));
-                    if (list == null) {
-                        list = new ArrayList<>();
-                        cache.put(expenditure.getDate().substring(0,10),list);
                     }
-                    list.add(expenditure);
+
 
                 }
 
-                // Function to sort map by Key
-                // TreeMap to store values of HashMap
-                TreeMap<String, List<Expenditure>> sorted = new TreeMap<>();
+                try {
 
-                // Copy all data from hashMap into TreeMap
-                sorted.putAll(cache);
+                    // Function to sort map by Key
+                    // TreeMap to store values of HashMap
+                    TreeMap<String, List<Expenditure>> sorted = new TreeMap<>();
 
-                // Display the TreeMap which is naturally sorted
-                for (Map.Entry<String, List<Expenditure>> entry : sorted.entrySet()){
+                    // Copy all data from hashMap into TreeMap
+                    sorted.putAll(cache);
 
-                    Double totalSpent = 0.0;
+                    // Display the TreeMap which is naturally sorted
+                    for (Map.Entry<String, List<Expenditure>> entry : sorted.entrySet()) {
 
-                    for (int i = 0; i < entry.getValue().size(); i++) {
-                        totalSpent += entry.getValue().get(i).getSpent();
-                    }
+                        Double totalSpent = 0.0;
 
-                    barEntries.add(new BarEntry(Integer.parseInt(entry.getKey().substring(8)), Float.parseFloat(totalSpent.toString()),entry.getKey()));
-                    labels.add(entry.getKey());
+                        for (int i = 0; i < entry.getValue().size(); i++) {
+                            totalSpent += entry.getValue().get(i).getSpent();
+                        }
+
+                        barEntries.add(new BarEntry(Integer.parseInt(entry.getKey().substring(8)), Float.parseFloat(totalSpent.toString()), entry.getKey()));
+                        labels.add(entry.getKey());
 //                    descriptionString = entry.getKey().substring(0,7);
+                    }
+
+                    BarDataSet barDataSet = new BarDataSet(barEntries, "Expenditure");
+                    Description description = new Description();
+                    description.setText("Daily Spending");
+                    barChart.setDescription(description);
+                    BarData data = new BarData();
+                    data.addDataSet(barDataSet);
+                    barChart.setData(data);
+                    barChart.animateY(4000);
+                    barChart.invalidate();
+
+                    YoYo.with(Techniques.ZoomIn)
+                            .duration(1000)
+                            .repeat(0)
+                            .playOn(barChart);
+
+                    Toast.makeText(getContext(), "Zoom along x or y axis to adjust", Toast.LENGTH_LONG).show();
+
+
+                    barChart.setTouchEnabled(true);
+                    barChart.setDragEnabled(true);
+                    barChart.setScaleEnabled(true);
+                }catch (Exception e) {
+
                 }
-
-                BarDataSet barDataSet = new BarDataSet(barEntries, "Expenditure");
-                Description description = new Description();
-                description.setText("Daily Spending");
-                barChart.setDescription(description);
-                BarData data = new BarData();
-                data.addDataSet(barDataSet);
-                barChart.setData(data);
-                barChart.animateY(4000);
-                barChart.invalidate();
-
-                YoYo.with(Techniques.ZoomIn)
-                        .duration(1000)
-                        .repeat(0)
-                        .playOn(barChart);
-
-                Toast.makeText(getContext(),"Zoom along x or y axis to adjust",Toast.LENGTH_LONG).show();
-
-
-                barChart.setTouchEnabled(true);
-                barChart.setDragEnabled(true);
-                barChart.setScaleEnabled(true);
             }
 
             @Override
