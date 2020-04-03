@@ -4,13 +4,18 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -44,18 +49,26 @@ public class BarGraphFragment extends Fragment {
 
     BarChart barChart;
     ArrayList<BarEntry> barEntries = new ArrayList<>();
-    XAxis xAxis;
     ArrayList<String> labels = new ArrayList<>();
-    String descriptionString;
+
+    ImageButton leftNavigation;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.fragment_bargraph, container, false);
         barChart = rootview.findViewById(R.id.barGraph);
+        leftNavigation = rootview.findViewById(R.id.navigateToPieChart);
 
-        xAxis = barChart.getXAxis();
-
+        leftNavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(BarGraphFragment.this)
+                        .navigate(R.id.action_barGraphFragment_to_pieChartFragment);
+            }
+        });
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();
@@ -100,13 +113,6 @@ public class BarGraphFragment extends Fragment {
 //                    descriptionString = entry.getKey().substring(0,7);
                 }
 
-//                xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
-//                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-//                xAxis.setDrawGridLines(false);
-//                xAxis.setDrawAxisLine(false);
-//                xAxis.setLabelCount(labels.size());
-//                xAxis.setLabelRotationAngle(270);
-
                 BarDataSet barDataSet = new BarDataSet(barEntries, "Expenditure");
                 Description description = new Description();
                 description.setText("Daily Spending");
@@ -114,8 +120,15 @@ public class BarGraphFragment extends Fragment {
                 BarData data = new BarData();
                 data.addDataSet(barDataSet);
                 barChart.setData(data);
-                barChart.animateY(2000);
+                barChart.animateY(4000);
                 barChart.invalidate();
+
+                YoYo.with(Techniques.ZoomIn)
+                        .duration(1000)
+                        .repeat(0)
+                        .playOn(barChart);
+
+                Toast.makeText(getContext(),"Zoom along x or y axis to adjust",Toast.LENGTH_LONG).show();
 
 
                 barChart.setTouchEnabled(true);

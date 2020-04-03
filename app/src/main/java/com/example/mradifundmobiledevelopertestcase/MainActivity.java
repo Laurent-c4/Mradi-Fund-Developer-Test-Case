@@ -32,6 +32,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -82,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mPasswordRef;
     private String userId;
 
+    public static FloatingActionButton fab;
+
     private FirebaseRecyclerAdapter<ExpenditureList, FireBaseMPESAStatementsViewHolder> mFirebaseAdapter;
 
     private  NavController navController;
@@ -119,14 +123,13 @@ public class MainActivity extends AppCompatActivity {
         mPasswordRef = FirebaseDatabase.getInstance().getReference("Passwords").child(userId);
         mStatementHistoryReference = FirebaseDatabase.getInstance().getReference("Expenditure_List").child(userId);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openFileChooser();
             }
         });
-
 
         // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
         mPasswordRef.addValueEventListener(new ValueEventListener() {

@@ -5,17 +5,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
-import com.github.mikephil.charting.charts.BarChart;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -28,16 +27,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static com.example.mradifundmobiledevelopertestcase.MainActivity.uploadedFilename;
 
 public class PieChartFragment extends Fragment {
 
     PieChart pieChart;
+    ImageButton leftNavigation;
+    ImageButton rightNavigation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +43,24 @@ public class PieChartFragment extends Fragment {
         View rootview = inflater.inflate(R.layout.fragment_piechart, container, false);
 
         pieChart = rootview.findViewById(R.id.pieChart);
+        leftNavigation = rootview.findViewById(R.id.navigateToLineGraph);
+        rightNavigation = rootview.findViewById(R.id.navigateToBarGraph);
+
+        leftNavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(PieChartFragment.this)
+                        .navigate(R.id.action_pieChartFragment_to_lineGraphFragment);
+            }
+        });
+
+        rightNavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(PieChartFragment.this)
+                        .navigate(R.id.action_pieChartFragment_to_barGraphFragment);
+            }
+        });
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();
@@ -78,6 +94,9 @@ public class PieChartFragment extends Fragment {
                 pieChart.setTransparentCircleRadius(40);
                 pieChart.setData(pieData);
                 pieChart.invalidate();
+
+                Toast.makeText(getContext(),"Rotate",Toast.LENGTH_LONG).show();
+
             }
 
             @Override

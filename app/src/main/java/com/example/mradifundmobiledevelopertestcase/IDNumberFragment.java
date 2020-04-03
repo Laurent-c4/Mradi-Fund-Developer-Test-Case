@@ -100,10 +100,10 @@ public class IDNumberFragment extends DialogFragment {
                     setIDNumberEditText.setVisibility(View.GONE);
                     submitIDNumberButton.setVisibility(View.GONE);
 
-                    Toast.makeText(getContext(), "Done!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Done! Ensure ID Number is the one responsible for you MPESA Statements",Toast.LENGTH_LONG).show();
 
                 } else {
-                    Toast.makeText(getContext(), "Please enter valid ID Number",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Invalid ID Number Format",Toast.LENGTH_SHORT).show();
 
                 }
 

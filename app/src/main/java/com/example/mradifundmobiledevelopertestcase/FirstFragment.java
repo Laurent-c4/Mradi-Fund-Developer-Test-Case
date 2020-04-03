@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,8 +12,12 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import static com.example.mradifundmobiledevelopertestcase.MainActivity.fab;
 
 public class FirstFragment extends Fragment {
     private CardView summaryCardView;
@@ -21,6 +26,7 @@ public class FirstFragment extends Fragment {
     private CardView IDNumberCardView;
     private CardView historyCardView;
     private TextView welcomeTextView;
+    LinearLayout ll;
 
     @Override
     public View onCreateView(
@@ -31,6 +37,14 @@ public class FirstFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String displayName = user.getDisplayName();
+
+        ll = rootView.findViewById(R.id.ll);
+
+        YoYo.with(Techniques.ZoomInLeft)
+                .duration(300)
+                .repeat(0)
+                .playOn(ll);
+
 
         welcomeTextView = rootView.findViewById(R.id.welcomeTextView);
         welcomeTextView.setText(displayName);
@@ -43,6 +57,10 @@ public class FirstFragment extends Fragment {
                     NavHostFragment.findNavController(FirstFragment.this)
                             .navigate(R.id.action_firstFragment_to_pieChartFragment);
                 } else {
+                    YoYo.with(Techniques.Bounce)
+                            .duration(1000)
+                            .repeat(2)
+                            .playOn(fab);
                     Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen or from History",Toast.LENGTH_LONG).show();
                 }
             }
@@ -56,7 +74,11 @@ public class FirstFragment extends Fragment {
                 NavHostFragment.findNavController(FirstFragment.this)
                         .navigate(R.id.action_firstFragment_to_barGraphFragment);
                 } else {
-                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen from History",Toast.LENGTH_LONG).show();
+                    YoYo.with(Techniques.Bounce)
+                            .duration(1000)
+                            .repeat(2)
+                            .playOn(fab);
+                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen or from History",Toast.LENGTH_LONG).show();
                 }
 
 
@@ -71,7 +93,11 @@ public class FirstFragment extends Fragment {
                     NavHostFragment.findNavController(FirstFragment.this)
                             .navigate(R.id.action_firstFragment_to_lineGraphFragment);
                 } else {
-                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen from History",Toast.LENGTH_LONG).show();
+                    YoYo.with(Techniques.Bounce)
+                            .duration(1000)
+                            .repeat(2)
+                            .playOn(fab);
+                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen or from History",Toast.LENGTH_LONG).show();
                 }
             }
         });
