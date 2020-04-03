@@ -69,11 +69,9 @@ public class PieChartFragment extends Fragment {
 
                 PieDataSet pieDataSet = new PieDataSet(dataValues,"Summary of Expenditure");
                 pieDataSet.setColors(colorClassArray);
-
                 PieData pieData = new PieData(pieDataSet);
 
-                pieChart.setHoleRadius(30);
-                pieChart.setCenterTextSize(20);
+                pieChart.setHoleRadius(10);
                 pieChart.setCenterTextRadiusPercent(50);
                 pieChart.setEntryLabelColor(Color.BLACK);
                 pieChart.animateY(1000);

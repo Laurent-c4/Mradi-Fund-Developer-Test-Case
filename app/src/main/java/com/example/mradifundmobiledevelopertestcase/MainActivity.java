@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                             call.enqueue(new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response response) {
-                                    navController.navigate(R.id.barGraphFragment);
+                                    navController.navigate(R.id.pieChartFragment);
                                 }
 
                                 @Override
@@ -424,12 +424,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         uploadedFilename =  expenditureList.getStatementName();
-                        navController.navigate(R.id.barGraphFragment);
+
+                        navController.navigate(R.id.pieChartFragment);
                     }
                 });
             }
-
-
 
             @NonNull
             @Override

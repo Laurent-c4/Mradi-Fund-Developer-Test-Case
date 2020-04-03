@@ -39,11 +39,11 @@ public class FirstFragment extends Fragment {
         summaryCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (MainActivity.mPDFUri!=null){
+                if (MainActivity.uploadedFilename!=null){
                     NavHostFragment.findNavController(FirstFragment.this)
                             .navigate(R.id.action_firstFragment_to_pieChartFragment);
                 } else {
-                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen or from History",Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -52,11 +52,11 @@ public class FirstFragment extends Fragment {
         barGraphCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (MainActivity.mPDFUri!=null){
+                if (MainActivity.uploadedFilename!=null){
                 NavHostFragment.findNavController(FirstFragment.this)
                         .navigate(R.id.action_firstFragment_to_barGraphFragment);
                 } else {
-                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen from History",Toast.LENGTH_LONG).show();
                 }
 
 
@@ -67,11 +67,11 @@ public class FirstFragment extends Fragment {
         lineGraphCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (MainActivity.mPDFUri!=null){
+                if (MainActivity.uploadedFilename!=null){
                     NavHostFragment.findNavController(FirstFragment.this)
                             .navigate(R.id.action_firstFragment_to_lineGraphFragment);
                 } else {
-                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"First upload a PDF using the button at the bottom of your screen from History",Toast.LENGTH_LONG).show();
                 }
             }
         });
