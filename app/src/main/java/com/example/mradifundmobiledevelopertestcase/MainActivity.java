@@ -11,9 +11,11 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -31,6 +33,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -74,8 +78,11 @@ public class MainActivity extends AppCompatActivity {
 
     private StorageReference mStorageReference;
     private DatabaseReference mUploadsReference;
+    private DatabaseReference mStatementHistoryReference;
     private DatabaseReference mPasswordRef;
     private String userId;
+
+    private FirebaseRecyclerAdapter<ExpenditureList, FireBaseMPESAStatementsViewHolder> mFirebaseAdapter;
 
     private  NavController navController;
 
@@ -110,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userId = user.getUid();
         mPasswordRef = FirebaseDatabase.getInstance().getReference("Passwords").child(userId);
+        mStatementHistoryReference = FirebaseDatabase.getInstance().getReference("Expenditure_List").child(userId);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -143,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        setUpHistoryFirebaseAdaper();
     }
 
     @Override
@@ -371,60 +380,6 @@ public class MainActivity extends AppCompatActivity {
                             call.enqueue(new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response response) {
-//                                    DatabaseReference mUserExpenditureListReference;
-//                                    mUserExpenditureListReference = FirebaseDatabase.getInstance().getReference("Expenditure_List").child(userId).child(getFileName(mPDFUri).replaceAll("[^A-Za-z0-9]",""));
-//                                    mUserExpenditureListReference.addValueEventListener(new ValueEventListener() {
-//                                        @Override
-//                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-////                                            Map<String, List<Expenditure>> cache = new HashMap<>();
-////                                            List<Expenditure> expenditureList = new ArrayList<>();
-////                                            for (DataSnapshot locationSnapshot : dataSnapshot.getChildren()){
-////                                                Expenditure expenditure = locationSnapshot.getValue(Expenditure.class);
-////
-////
-////                                                //Group same-day expenditure in hash map
-////                                                List<Expenditure> list = cache.get(expenditure.getDate().substring(8,10));
-////                                                if (list == null) {
-////                                                    list = new ArrayList<>();
-////                                                    cache.put(expenditure.getDate().substring(8,10),list);
-////                                                }
-////                                                list.add(expenditure);
-////
-////                                            }
-////
-////                                            // Function to sort map by Key
-////                                            // TreeMap to store values of HashMap
-////                                            TreeMap<String, List<Expenditure>> sorted = new TreeMap<>();
-////
-////                                            // Copy all data from hashMap into TreeMap
-////                                            sorted.putAll(cache);
-////
-////                                            // Display the TreeMap which is naturally sorted
-////                                            for (Map.Entry<String, List<Expenditure>> entry : sorted.entrySet()){
-////
-////                                                Double totalSpent = 0.0;
-////
-////                                                for (int i = 0; i < entry.getValue().size(); i++) {
-////                                                    totalSpent += entry.getValue().get(i).getSpent();
-////                                                }
-////
-////
-////
-////                                                lineGraphSeries.appendData(new DataPoint(Integer.parseInt(entry.getKey()), totalSpent),true,cache.entrySet().size());
-////                                                if (totalSpent > maxY){
-////                                                    maxY = totalSpent + 2000;
-////                                                }
-////                                            }
-////
-////                                            navController.navigate(R.id.lineGraphFragment);
-//
-//                                        }
-//
-//                                        @Override
-//                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                        }
-//                                    });
                                     navController.navigate(R.id.barGraphFragment);
                                 }
 
@@ -454,4 +409,52 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private  void setUpHistoryFirebaseAdaper(){
+        FirebaseRecyclerOptions<ExpenditureList> options =
+                new FirebaseRecyclerOptions.Builder<ExpenditureList>()
+                .setQuery(mStatementHistoryReference, ExpenditureList.class)
+                .build();
+
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<ExpenditureList, FireBaseMPESAStatementsViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull FireBaseMPESAStatementsViewHolder fireBaseMPESAStatementsViewHolder, int i, @NonNull ExpenditureList expenditureList) {
+                fireBaseMPESAStatementsViewHolder.bindStatement(expenditureList,i);
+
+                fireBaseMPESAStatementsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        uploadedFilename =  expenditureList.getStatementName();
+                        navController.navigate(R.id.barGraphFragment);
+                    }
+                });
+            }
+
+
+
+            @NonNull
+            @Override
+            public FireBaseMPESAStatementsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_list_item,parent,false);
+                return new FireBaseMPESAStatementsViewHolder(view);
+            }
+
+        };
+
+    }
+
+    public FirebaseRecyclerAdapter<ExpenditureList , FireBaseMPESAStatementsViewHolder> getmFirebaseAdapter(){
+        return  mFirebaseAdapter;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mFirebaseAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mFirebaseAdapter.stopListening();
+    }
 }

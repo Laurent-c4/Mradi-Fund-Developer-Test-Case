@@ -46,7 +46,7 @@ public class LineGraphFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();
         //    LineGraphSeries<DataPoint> series;
-        DatabaseReference mUserExpenditureListReference = FirebaseDatabase.getInstance().getReference("Expenditure_List").child(userId).child(uploadedFilename.replaceAll("[^A-Za-z0-9]",""));
+        DatabaseReference mUserExpenditureListReference = FirebaseDatabase.getInstance().getReference("Expenditure_List").child(userId).child(uploadedFilename.replaceAll("[^A-Za-z0-9]","")).child("expenditureList");
         mUserExpenditureListReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

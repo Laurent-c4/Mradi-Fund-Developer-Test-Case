@@ -19,7 +19,7 @@ public class FirstFragment extends Fragment {
     private CardView barGraphCardView;
     private CardView lineGraphCardView;
     private CardView IDNumberCardView;
-    private CardView emailCardView;
+    private CardView historyCardView;
     private TextView welcomeTextView;
 
     @Override
@@ -85,19 +85,14 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        emailCardView = rootView.findViewById(R.id.emailCardView);
-        emailCardView.setOnClickListener(new View.OnClickListener() {
+        historyCardView = rootView.findViewById(R.id.historyCardView);
+        historyCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                NavHostFragment.findNavController(FirstFragment.this)
+                        .navigate(R.id.action_firstFragment_to_historyFragment);
             }
         });
-
-
-
-
-
-
         return rootView;
 
 

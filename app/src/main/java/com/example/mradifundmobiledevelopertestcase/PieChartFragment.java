@@ -48,7 +48,7 @@ public class PieChartFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();
-        DatabaseReference mUserSummaryListReference = FirebaseDatabase.getInstance().getReference("Summary_List").child(userId).child(uploadedFilename.replaceAll("[^A-Za-z0-9]",""));
+        DatabaseReference mUserSummaryListReference = FirebaseDatabase.getInstance().getReference("Summary_List").child(userId).child(uploadedFilename.replaceAll("[^A-Za-z0-9]","")).child("summaryList");
         mUserSummaryListReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -75,6 +75,7 @@ public class PieChartFragment extends Fragment {
                 pieChart.setHoleRadius(30);
                 pieChart.setCenterTextSize(20);
                 pieChart.setCenterTextRadiusPercent(50);
+                pieChart.setEntryLabelColor(Color.BLACK);
                 pieChart.animateY(1000);
                 pieChart.setTransparentCircleRadius(40);
                 pieChart.setData(pieData);
