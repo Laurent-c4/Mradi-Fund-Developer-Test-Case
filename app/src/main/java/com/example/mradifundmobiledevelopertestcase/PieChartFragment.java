@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,7 +43,7 @@ public class PieChartFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.fragment_piechart, container, false);
 
-        pieChart = rootview.findViewById(R.id.pieChart);
+        pieChart =  rootview.findViewById(R.id.pieChart);
         leftNavigation = rootview.findViewById(R.id.navigateToLineGraph);
         rightNavigation = rootview.findViewById(R.id.navigateToBarGraph);
 
@@ -75,27 +76,32 @@ public class PieChartFragment extends Fragment {
                     summaryList.add(summary);
                 }
 
-                dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(0).getSpent().toString()),summaryList.get(0).getTransactionType()));
-                dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(3).getSpent().toString()),summaryList.get(3).getTransactionType()));
-                dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(4).getSpent().toString()),summaryList.get(4).getTransactionType()));
-                dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(5).getSpent().toString()),summaryList.get(5).getTransactionType()));
-                dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(6).getSpent().toString()),summaryList.get(6).getTransactionType()));
+                try {
+                    dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(0).getSpent().toString()), summaryList.get(0).getTransactionType()));
+                    dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(3).getSpent().toString()), summaryList.get(3).getTransactionType()));
+                    dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(4).getSpent().toString()), summaryList.get(4).getTransactionType()));
+                    dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(5).getSpent().toString()), summaryList.get(5).getTransactionType()));
+                    dataValues.add(new PieEntry(Float.parseFloat(summaryList.get(6).getSpent().toString()), summaryList.get(6).getTransactionType()));
 
-                int[] colorClassArray = new int[]{Color.GREEN,Color.MAGENTA,Color.YELLOW,Color.CYAN,Color.RED};
+                    int[] colorClassArray = new int[]{Color.GREEN, Color.MAGENTA, Color.YELLOW, Color.CYAN, Color.RED};
 
-                PieDataSet pieDataSet = new PieDataSet(dataValues,"Summary of Expenditure");
-                pieDataSet.setColors(colorClassArray);
-                PieData pieData = new PieData(pieDataSet);
+                    PieDataSet pieDataSet = new PieDataSet(dataValues, "Summary of Expenditure");
+                    pieDataSet.setColors(colorClassArray);
+                    PieData pieData = new PieData(pieDataSet);
 
-                pieChart.setHoleRadius(10);
-                pieChart.setCenterTextRadiusPercent(50);
-                pieChart.setEntryLabelColor(Color.BLACK);
-                pieChart.animateY(1000);
-                pieChart.setTransparentCircleRadius(40);
-                pieChart.setData(pieData);
-                pieChart.invalidate();
+                    pieChart.setHoleRadius(10);
+                    pieChart.setCenterTextRadiusPercent(50);
+                    pieChart.setEntryLabelColor(Color.BLACK);
+                    pieChart.animateY(1000);
+                    pieChart.setTransparentCircleRadius(40);
+                    pieChart.setData(pieData);
+                    pieChart.setNoDataText("No data");
+                    pieChart.invalidate();
 
-                Toast.makeText(getContext(),"Rotate",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Rotate", Toast.LENGTH_LONG).show();
+                }catch (Exception e) {
+
+                }
 
             }
 

@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -28,7 +27,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -57,15 +55,16 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -130,6 +129,11 @@ public class MainActivity extends AppCompatActivity {
                 openFileChooser();
             }
         });
+
+        YoYo.with(Techniques.Bounce)
+                .duration(500)
+                .repeat(5)
+                .playOn(fab);
 
         // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
         mPasswordRef.addValueEventListener(new ValueEventListener() {
@@ -201,54 +205,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
 
                 if(allPermissionsGranted()) {
-                    // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
-                    mPasswordRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            int count = 0;
-                            for(DataSnapshot locationSnapshot:dataSnapshot.getChildren()){
-                                count++;
-                            }
-
-                            if(count==0) {
-                                FragmentManager fm = getSupportFragmentManager();
-                                IDNumberFragment idNumberFragment = new IDNumberFragment();
-                                idNumberFragment.show(fm, "IDFragment");
-                            } else {
-                                // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
-                                mPasswordRef.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        int count = 0;
-                                        for(DataSnapshot locationSnapshot:dataSnapshot.getChildren()){
-                                            count++;
-                                        }
-
-                                        if(count==0) {
-                                            FragmentManager fm = getSupportFragmentManager();
-                                            IDNumberFragment idNumberFragment = new IDNumberFragment();
-                                            idNumberFragment.show(fm, "IDFragment");
-                                        } else {
-                                            uploadFile();
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
+                    uploadFile();
                 }else {
                     ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
                 }
@@ -261,58 +218,24 @@ public class MainActivity extends AppCompatActivity {
 //        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == REQUEST_CODE_PERMISSIONS){
             if(allPermissionsGranted()) {
-                // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
-                mPasswordRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        int count = 0;
-                        for(DataSnapshot locationSnapshot:dataSnapshot.getChildren()){
-                            count++;
-                        }
-
-                        if(count==0) {
-                            FragmentManager fm = getSupportFragmentManager();
-                            IDNumberFragment idNumberFragment = new IDNumberFragment();
-                            idNumberFragment.show(fm, "IDFragment");
-                        } else {
-                            // CHECK IF USER HAS SET ID NUMBER, WHICH IS ESSENTIAL FOR DECRYPTING PDF BY THE BACKEND API
-                            mPasswordRef.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    int count = 0;
-                                    for(DataSnapshot locationSnapshot:dataSnapshot.getChildren()){
-                                        count++;
-                                    }
-
-                                    if(count==0) {
-                                        FragmentManager fm = getSupportFragmentManager();
-                                        IDNumberFragment idNumberFragment = new IDNumberFragment();
-                                        idNumberFragment.show(fm, "IDFragment");
-                                    } else {
-                                        uploadFile();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                uploadFile();
             } else {
                 Toast.makeText(this, "Permissions not granted by user ", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mFirebaseAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mFirebaseAdapter.stopListening();
     }
 
     private boolean allPermissionsGranted() {
@@ -344,10 +267,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void uploadFile(){
         if (mPDFUri != null){
-
             //UPLOAD PDF FILE TO FIREBASE STORAGE
             StorageReference fileReference = mStorageReference.child(userId+"/"+getFileName(mPDFUri));
             progressBar.setVisibility(View.VISIBLE);
+            Toast.makeText(MainActivity.this,"Uploading...", Toast.LENGTH_LONG).show();
             fileReference.putFile(mPDFUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -361,16 +284,19 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }, 3000);
 
-                            Toast.makeText(MainActivity.this,"Upload Succesful", Toast.LENGTH_LONG).show();
+
+                            Toast.makeText(MainActivity.this,"Processing File...", Toast.LENGTH_LONG).show();
+
 
                             //UPDATE DATABASE WITH NEW PDF DETAILS
                             Upload upload = new Upload(getFileName(mPDFUri),taskSnapshot.getUploadSessionUri().toString());
                             mUploadsReference.child(userId).push().setValue(upload);
 
-
                             // POST REQUEST TO BACKEND API CONTAINING NEW PDF WHOSE DATA SHOULD BE EXTRACTED
-                            File file = new File(Environment.getExternalStoragePublicDirectory(
-                                    Environment.DIRECTORY_DOWNLOADS),getFileName(mPDFUri));
+//                            File file = new File(Environment.getExternalStoragePublicDirectory(
+//                                    Environment.DIRECTORY_DOWNLOADS),getFileName(mPDFUri));
+
+                            File file = saveContentToFile(mPDFUri,createTempFile(getFileName(mPDFUri)));
 
                             RequestBody requestBody = RequestBody.create(MediaType.parse("application/pdf"),file);
                             MultipartBody.Part part = MultipartBody.Part.createFormData("files[]",file.getName(), requestBody);
@@ -384,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onResponse(Call call, Response response) {
                                     navController.navigate(R.id.pieChartFragment);
+                                    Toast.makeText(MainActivity.this,"Processing File...", Toast.LENGTH_LONG).show();
                                 }
 
                                 @Override
@@ -448,15 +375,36 @@ public class MainActivity extends AppCompatActivity {
         return  mFirebaseAdapter;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mFirebaseAdapter.startListening();
+
+    private File createTempFile(String name) {
+        File file = null;
+        try {
+            file = File.createTempFile(name, null, this.getCacheDir());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mFirebaseAdapter.stopListening();
+    private File saveContentToFile(Uri uri, File file) {
+        ContentResolver cx =getContentResolver();
+        try {
+            InputStream stream = cx.openInputStream(uri);
+            BufferedSource source = Okio.buffer(Okio.source(stream));
+            BufferedSink sink = Okio.buffer(Okio.sink(file));
+            sink.writeAll(source);
+            sink.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return file;
     }
+
+
+
+
 }
