@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -92,6 +93,10 @@ public class PieChartFragment extends Fragment {
 
 
 
+                    Description description = new Description();
+                    description.setText("Summary");
+                    pieChart.setDescription(description);
+
                     PieDataSet pieDataSet = new PieDataSet(dataValues, "Summary of Expenditure");
                     pieDataSet.setColors(colorClassArray);
                     PieData pieData = new PieData(pieDataSet);
@@ -141,7 +146,7 @@ public class PieChartFragment extends Fragment {
             TextView tvAmt = (TextView) tr.getChildAt(2);
             linearLayoutColor.setBackgroundColor(colorClassArray[0]);
             tvLabel.setText(summaryList.get(0).getTransactionType());
-            tvAmt.setText(summaryList.get(0).getSpent().toString());
+            tvAmt.setText("Ksh. " + summaryList.get(0).getSpent().toString());
 
             LayoutInflater inflater2 = getLayoutInflater();
             TableRow tr2 = (TableRow)          inflater2.inflate(R.layout.table_row_legend,
@@ -153,7 +158,7 @@ public class PieChartFragment extends Fragment {
             TextView tvAmt2 = (TextView) tr2.getChildAt(2);
             linearLayoutColor2.setBackgroundColor(colorClassArray[1]);
             tvLabel2.setText(summaryList.get(3).getTransactionType());
-            tvAmt2.setText(summaryList.get(3).getSpent().toString());
+            tvAmt2.setText("Ksh. " + summaryList.get(3).getSpent().toString());
 
             LayoutInflater inflater3 = getLayoutInflater();
             TableRow tr3 = (TableRow)          inflater3.inflate(R.layout.table_row_legend,
@@ -165,7 +170,7 @@ public class PieChartFragment extends Fragment {
             TextView tvAmt3 = (TextView) tr3.getChildAt(2);
             linearLayoutColor3.setBackgroundColor(colorClassArray[2]);
             tvLabel3.setText(summaryList.get(4).getTransactionType());
-            tvAmt3.setText(summaryList.get(4).getSpent().toString());
+            tvAmt3.setText("Ksh. " + summaryList.get(4).getSpent().toString());
 
             LayoutInflater inflater4 = getLayoutInflater();
             TableRow tr4 = (TableRow)          inflater4.inflate(R.layout.table_row_legend,
@@ -177,7 +182,7 @@ public class PieChartFragment extends Fragment {
             TextView tvAmt4 = (TextView) tr4.getChildAt(2);
             linearLayoutColor4.setBackgroundColor(colorClassArray[3]);
             tvLabel4.setText(summaryList.get(5).getTransactionType());
-            tvAmt4.setText(summaryList.get(5).getSpent().toString());
+            tvAmt4.setText("Ksh. " + summaryList.get(5).getSpent().toString());
 
             LayoutInflater inflater5 = getLayoutInflater();
             TableRow tr5 = (TableRow)          inflater5.inflate(R.layout.table_row_legend,
@@ -189,7 +194,7 @@ public class PieChartFragment extends Fragment {
             TextView tvAmt5 = (TextView) tr5.getChildAt(2);
             linearLayoutColor5.setBackgroundColor(colorClassArray[4]);
             tvLabel5.setText(summaryList.get(6).getTransactionType());
-            tvAmt5.setText(summaryList.get(6).getSpent().toString());
+            tvAmt5.setText("Ksh. " + summaryList.get(6).getSpent().toString());
 
         pieChart.getLegend().setWordWrapEnabled(true);
         pieChart.getLegend().setEnabled(false);

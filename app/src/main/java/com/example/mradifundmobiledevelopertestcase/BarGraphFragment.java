@@ -1,30 +1,23 @@
 package com.example.mradifundmobiledevelopertestcase;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-
-import android.os.SystemClock;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,8 +25,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.example.mradifundmobiledevelopertestcase.MainActivity.lineGraphSeries;
-import static com.example.mradifundmobiledevelopertestcase.MainActivity.maxY;
 import static com.example.mradifundmobiledevelopertestcase.MainActivity.uploadedFilename;
 
 public class BarGraphFragment extends Fragment {
@@ -126,7 +115,7 @@ public class BarGraphFragment extends Fragment {
                     BarData data = new BarData();
                     data.addDataSet(barDataSet);
                     barChart.setData(data);
-                    barChart.animateY(4000);
+                    barChart.animateY(1500);
                     barChart.invalidate();
 
                     YoYo.with(Techniques.ZoomIn)
