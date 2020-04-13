@@ -51,8 +51,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -93,8 +91,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static Uri mPDFUri=null;
 
-    public static LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<DataPoint>();
-    public static Double maxY = 0.0;
     public static String uploadedFilename;
 
 
