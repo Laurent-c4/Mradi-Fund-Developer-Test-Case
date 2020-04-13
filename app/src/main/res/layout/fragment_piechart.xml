@@ -9,9 +9,17 @@
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="400dp"
         android:layout_toRightOf="@+id/navigateToLineGraph"
         android:layout_toLeftOf="@id/navigateToBarGraph"/>
+
+    <TableLayout
+        android:id="@+id/child_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pieChart"
+        android:orientation="vertical" />
+
 
     <ImageButton
         android:id="@+id/navigateToLineGraph"
