@@ -11,10 +11,10 @@ Java
 Firebase
 
 ## App Overview
-![Hero Squad](app/src/main/res/screenshots/home.jpg) &nbsp;
-![Hero Squad](app/src/main/res/screenshots/summary.jpg) &nbsp;
-![Hero Squad](app/src/main/res/screenshots/daily_expenses_bar.jpg) &nbsp;
-![Hero Squad](app/src/main/res/screenshots/daily_expenses_line.jpg)
+![Hero Squad](app/screenshots/home.jpg) &nbsp;
+![Hero Squad](app/screenshots/summary.jpg) &nbsp;
+![Hero Squad](app/screenshots/daily_expenses_bar.jpg) &nbsp;
+![Hero Squad](app/screenshots/daily_expenses_line.jpg)
 
 ## Support and contact details
 Contact +254792599994 for any questions concerning the app.
